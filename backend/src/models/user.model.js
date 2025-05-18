@@ -14,6 +14,9 @@ const userSchema = new mongoose.Schema({
         unique: true,
         lowercase: true,
     },
+    profilePic: {
+        type: String,
+    },
     bio: {
         type: String,
     },
@@ -24,8 +27,29 @@ const userSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
     },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
+    verficationToken: {
+        type: String,
+    },
+    verficationTokenExpiresAt: {
+        type: Date,
+    },
+    resetPasswordToken: {
+        type: String,
+    },
+    resetPasswordTokenExpiresAt: {
+        type: Date,
+    },
+    expiresAt: {
+        type: Date,
+        default: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
+    }
 }, { timestamps: true })
 
+userSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
@@ -41,7 +65,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 }
 
 
-userSchema.methods.generateAccessToken = async () => {
+userSchema.methods.generateAccessToken = function () {
     return jwt.sign(
         {
             _id: this._id,
@@ -55,7 +79,7 @@ userSchema.methods.generateAccessToken = async () => {
     )
 }
 
-userSchema.methods.generateRefreshToken = async () => {
+userSchema.methods.generateRefreshToken = function () {
     return jwt.sign(
         {
             _id: this._id,
