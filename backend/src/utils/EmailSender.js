@@ -11,13 +11,14 @@ import {
 
 const sendVerificationCode = async (email, verificationCode) => {
     try {
-        const resp = await mailTransporter.sendMail({
+        const res = await mailTransporter.sendMail({
             from: "WriterFlow <vinaydev19.projects@gmail.com>",
             to: email,
             subject: "Verify Your Email",
             text: "verify Your Email",
             html: Verification_Email_Template.replace("{verificationCode}", verificationCode)
         })
+        console.log("verifycaion code send successfully", res);
     } catch (error) {
         console.log(
             `something want wrong while send the verification code || ${error}`
@@ -25,6 +26,24 @@ const sendVerificationCode = async (email, verificationCode) => {
     }
 }
 
+const sendWalcomeEmail = async (name, email) => {
+    try {
+        const res = await mailTransporter.sendMail({
+            from: "WriterFlow <vinaydev19.projects@gmail.com>",
+            to: email,
+            subject: "Walcome to our WriterFlow community",
+            text: "Walcome to our WriterFlow community",
+            html: Welcome_Email_Template.replace("{name}", name)
+        })
+        console.log("walcome email is send successfully", res);
+    } catch (error) {
+        console.log(
+            `something want wrong while send the walcome email || ${error}`
+        );
+    }
+}
+
 export {
-    sendVerificationCode
+    sendVerificationCode,
+    sendWalcomeEmail
 }
